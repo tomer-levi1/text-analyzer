@@ -14,7 +14,7 @@ Built as the final project of my Introduction to Computer Science course (Python
 |------|--------------|
 | 1 | **Preprocessing:** lowercases text, removes punctuation, removes unwanted words and extra spaces, and splits sentences into words. Names and nicknames are processed the same way. |
 | 2 | **Sequence counts:** counts every word sequence of length 1 up to `k` across all sentences and sorts the results. |
-| 3 | **Name mentions:** counts how many times each person is mentioned, including by nickname. |
+| 3 | **Name mentions:** counts the words in the text that contain a person's first or last name. |
 | 4 | **Sequence search:** given a list of word sequences, returns the sentences that contain each one. |
 | 5 | **Person context:** for each person, collects the word sequences that appear in sentences where they are mentioned. |
 | 6 | **Connections graph:** slides a window of sentences over the text, links people who are mentioned together in at least `threshold` windows, and returns the edges. |
