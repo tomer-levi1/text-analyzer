@@ -17,7 +17,7 @@ Built as the final project of my Introduction to Computer Science course (Python
 | 3 | **Name mentions:** counts how many times each person is mentioned, including by nickname. |
 | 4 | **Sequence search:** given a list of word sequences, returns the sentences that contain each one. |
 | 5 | **Person context:** for each person, collects the word sequences that appear in sentences where they are mentioned. |
-| 6 | **Connections graph:** slides a window over the text, links people who appear together in a window at least `threshold` times, and returns the edges. |
+| 6 | **Connections graph:** slides a window of sentences over the text, links people who are mentioned together in at least `threshold` windows, and returns the edges. |
 | 7 | **Connection check:** checks whether two people are connected in the graph within a maximal distance. |
 | 8 | **Fixed-length connection check:** checks whether two people are connected by a path of an exact length. |
 
@@ -46,8 +46,8 @@ python main.py -t <task> [options] > result.json
 | `-p`, `--preprocessed` | JSON output of task 1 (or 6), to skip re-processing |
 | `--maxk` | Maximum sequence length (tasks 2, 5) |
 | `--qsek_query_path` | JSON file with the sequences to search for (task 4) |
-| `--windowsize` | Window size for the connections graph (tasks 6-8) |
-| `--threshold` | Minimum co-occurrences to create a connection (tasks 6-8) |
+| `--windowsize` | Window size, in sentences (tasks 6-8) |
+| `--threshold` | Minimum number of windows in which two people must appear together to be connected (tasks 6-8) |
 | `--pairs` | JSON file with pairs of people to check (tasks 7, 8) |
 | `--maximal_distance` | Maximal path length allowed (task 7) |
 | `--fixed_length` | Exact path length required (task 8) |
@@ -63,16 +63,26 @@ Output is printed as JSON. Invalid input prints `Invalid input`.
 
 ### Examples
 
+A small made-up data set is included in `sample_data/` (a bakery story with five people), so you can try the tool right away:
+
 ```bash
+# Task 3: count mentions of each person
+python main.py -t 3 -s sample_data/sentences.csv -n sample_data/people.csv -r sample_data/REMOVEWORDS.csv
+
 # Task 4: find sentences containing given word sequences
-python main.py -t 4 -s sentences.csv --qsek_query_path kseq_query_keys.json -r REMOVEWORDS.csv > res.json
+python main.py -t 4 -s sample_data/sentences.csv --qsek_query_path sample_data/kseq_query_keys.json -r sample_data/REMOVEWORDS.csv
 
 # Task 6: build the connections graph
-python main.py -t 6 -s sentences.csv -n people.csv -r REMOVEWORDS.csv --windowsize 4 --threshold 4 > res.json
+python main.py -t 6 -s sample_data/sentences.csv -n sample_data/people.csv -r sample_data/REMOVEWORDS.csv --windowsize 1 --threshold 2
 
-# Task 7: check whether pairs of people are connected
-python main.py -t 7 -s sentences.csv -n people.csv --pairs people_connections.json -r REMOVEWORDS.csv --windowsize 5 --threshold 2 --maximal_distance 1000 > res.json
+# Task 7: check whether pairs of people are connected within 2 steps
+python main.py -t 7 -s sample_data/sentences.csv -n sample_data/people.csv --pairs sample_data/people_connections.json -r sample_data/REMOVEWORDS.csv --windowsize 1 --threshold 2 --maximal_distance 2
+
+# Task 8: check whether pairs are connected by a path of exactly 3 steps
+python main.py -t 8 -s sample_data/sentences.csv -n sample_data/people.csv --pairs sample_data/people_connections.json -r sample_data/REMOVEWORDS.csv --windowsize 1 --threshold 2 --fixed_length 3
 ```
+
+Add `> result.json` at the end of any command to save the output to a file.
 
 ## Tests
 
@@ -97,5 +107,6 @@ The `handle_*` functions are not tested directly, since each one only combines s
 .
 ├── main.py        # all the code: preprocessing, analysis, graph, CLI
 ├── test_main.py   # pytest tests
+├── sample_data/   # small made-up input files for trying the tool
 └── README.md
 ```
